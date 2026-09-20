@@ -53,3 +53,9 @@ async def handle_message(from_number: str, text: str) -> None:
         await send_text_message(from_number, reply)
     except Exception:
         logger.exception("Failed to handle message from %s", from_number)
+        try:
+            await send_text_message(
+                from_number, "Sorry, something went wrong on my end. Please try again in a moment."
+            )
+        except Exception:
+            logger.exception("Failed to send error reply to %s", from_number)

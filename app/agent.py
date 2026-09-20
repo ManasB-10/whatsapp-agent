@@ -12,6 +12,9 @@ SYSTEM_PROMPT = (
     "Keep replies short, friendly, and to the point — this is a chat interface, not email."
 )
 
+MAX_REPLY_CHARS = 4096
+FALLBACK_REPLY = "Sorry, I couldn't come up with a reply to that. Could you try rephrasing?"
+
 _chats: dict[str, Any] = {}
 
 
@@ -27,4 +30,7 @@ def _get_chat(phone_number: str) -> Any:
 async def generate_reply(phone_number: str, user_message: str) -> str:
     chat = _get_chat(phone_number)
     response = await chat.send_message(user_message)
-    return response.text
+    reply = (response.text or "").strip()
+    if not reply:
+        return FALLBACK_REPLY
+    return reply[:MAX_REPLY_CHARS]
